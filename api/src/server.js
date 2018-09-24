@@ -29,7 +29,7 @@ app.get('/', async function (req, res) {
     if (threshold >= timestamp ) console.log(`Warning: Threshold ${threshold} is bigger than timestamp.`);
 
     if (!timestamp && !sig && !address ) {
-        res.status(200).send(config.welcome_message);
+        res.status(200).send(config.message);
         return
     }
 
