@@ -11,8 +11,8 @@ var app = express();
 app.enable("trust proxy"); // Trust our NGINX
  
 const limiter = rateLimit({
-  windowMs: 20 * 60 * 1000, // 
-  max: 5 // limit each IP to 5 requests 
+  windowMs: parseInt(config.limit_window) * 60 * 1000, // 
+  max: parseInt(config.limit_rate) // limit each IP to N requests 
 });
  
 // Apply the limit to all requests
@@ -23,7 +23,7 @@ app.get('/', async function (req, res) {
     var timestamp = parseInt(req.query.timestamp,10);
     var threshold  = parseInt(config.time_threshold,10);
     var sig = req.query.sig;
-    var ethAddress = '0x0';
+    var signAddress = '0x0';
     const epoch = Math.floor((new Date).getTime() / 1000 );
 
     if (threshold >= timestamp ) console.log(`Warning: Threshold ${threshold} is bigger than timestamp.`);
@@ -57,8 +57,15 @@ app.get('/', async function (req, res) {
         var subdomain = address.toLowerCase().substr(2).substring(0,8);
         // Use ipv4 only
         var remoteIP = req.connection.remoteAddress.includes(':') ? req.connection.remoteAddress.split(':')[3] : req.connection.remoteAddress
-        var result = await nsupdate(config.bind_server, config.zone, subdomain, config.ttl, remoteIP);
-        res.status(200).send(`Your dynamic domain ${subdomain}.${config.zone} has been updated to ${remoteIP}`);
+        try {
+            var result = await nsupdate(config.bind_server, config.zone, subdomain, config.ttl, remoteIP);
+            if (result) {
+                res.status(200).send(`Your dynamic domain ${subdomain}.${config.zone} has been updated to ${remoteIP}`);
+            }
+        } catch (err){
+            res.status(500).send(`Error on update: ${err}`);
+        }
+        
     }
 });
 
