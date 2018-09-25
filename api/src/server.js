@@ -55,8 +55,7 @@ app.get('/', async function (req, res) {
     } else {
         // Grab only first 8 chars of address as subdomain
         var subdomain = address.toLowerCase().substr(2).substring(0,8);
-        // Use ipv4 only
-        var remoteIP = req.connection.remoteAddress.includes(':') ? req.connection.remoteAddress.split(':')[3] : req.connection.remoteAddress
+        var remoteIP = req.ip.includes(':') ? req.ip.split(':')[3] : req.ip
         try {
             var result = await nsupdate(config.bind_server, config.zone, subdomain, config.ttl, remoteIP);
             if (result) {

@@ -8,19 +8,26 @@ services:
     ports:
       - "53:53"
       - "53:53/udp"
+    environment:
+      - ZONE=dyn.dappnode.io
+      - UPDATE_HOST=172.18.0.0/16
 
   dyndns-api:
     restart: always
     image: dyndns-api
     build: ./api
     container_name: dyndns-api
+    expose:
+      - 8080
     environment:
-      - VIRTUAL_HOST=localhost
+      - VIRTUAL_HOST=ns.dappnode.io
       - VIRTUAL_NETWORK=nginx-proxy
       - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=sample.example.com
-      - LETSENCRYPT_EMAIL=email@example.com
+      - LETSENCRYPT_HOST=ns.dappnode.io
+      - LETSENCRYPT_EMAIL=email@dappnode.io
       - DYNDNS_BIND_SERVER=bind
+      - DYNDNS_ZONE=dyn.dappnode.io
+      - DYNDNS_THRESHOLD=600
 
   nginx:
     image: nginx
@@ -68,4 +75,3 @@ networks:
   default:
     external:
       name: nginx-proxy
-
