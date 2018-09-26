@@ -8,6 +8,8 @@ services:
     ports:
       - "53:53"
       - "53:53/udp"
+    volumes:
+      - 'bind-config:/etc/bind/'
     environment:
       - ZONE=dyn.dappnode.io
       - UPDATE_HOST=172.18.0.0/16
