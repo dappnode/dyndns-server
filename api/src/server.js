@@ -14,7 +14,8 @@ app.enable("trust proxy");
 // Apply the rate limit to all requests
 const limiter = rateLimit({
   windowMs: parseInt(config.limit_window) * 60 * 1000,
-  max: parseInt(config.limit_rate)
+  max: parseInt(config.limit_rate),
+  message: JSON.stringify({ message: `Too many requests from this IP, please try again after ${config.limit_window} minutes.` })
 });
 app.use(limiter);
 
