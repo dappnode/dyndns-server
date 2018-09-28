@@ -10,7 +10,7 @@ var app = express();
 
 // Trust NGINX proxy
 app.enable("trust proxy"); 
- 
+
 // Apply the rate limit to all requests
 const limiter = rateLimit({
   windowMs: parseInt(config.limit_window) * 60 * 1000,
@@ -19,8 +19,13 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Just return public IP, no JSON for consistency with other services (icanhazip.com, ident.me, etc.)
+app.get('/myip',  function (req, res) {
+    res.status(200).send(req.ip)
+});
+
 // Middleware to return JSON header
-app.use(function (req, res, next) {
+app.use('/',function (req, res, next) {
     res.header('Content-Type', 'application/json');
     next();
 });

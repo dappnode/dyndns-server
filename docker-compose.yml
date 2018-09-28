@@ -68,6 +68,7 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
 
 volumes:
+  bind-config:
   nginx-config:
   nginx-certs:
   nginx-vhosts:
