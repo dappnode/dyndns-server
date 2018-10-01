@@ -65,8 +65,8 @@ app.get('/', async function (req, res) {
     } else if (!validTimestamp) {
         res.status(400).send(JSON.stringify({ message: "Timestamp out of sync. Is your server syncronized?"}));
     } else {
-        // Grab only first 8 chars of address as subdomain
-        var subdomain = address.toLowerCase().substr(2).substring(0,8);
+        // Grab only first 16 chars of address as subdomain
+        var subdomain = address.toLowerCase().substr(2).substring(0,16);
         // Grab ipv4 only
         var remoteIP = req.ip.includes(':') ? req.ip.split(':')[3] : req.ip
         try {
