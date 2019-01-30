@@ -1,7 +1,8 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const EthCrypto = require('eth-crypto');
 const nsupdate = require('./util/nsupdate');
+const verifyEthCrypto = require('./verifyEthCrypto')
+const verifyNacl = require('./verifyNacl')
 
 // Load configuration
 const config = require('./config');
@@ -37,51 +38,49 @@ app.get('/', async function (req, res) {
     var sig = req.query.sig;
     var signAddress = '0x0';
     const epoch = Math.floor((new Date).getTime() / 1000 );
+    var version = req.query.version
 
-    if (threshold >= timestamp ) console.log(`Warning: Threshold ${threshold} is bigger than timestamp.`);
-
+    // If no parameteres were passed, return a generic welcome message
     if (!timestamp && !sig && !address ) {
-        res.status(200).send(JSON.stringify({ message: config.message }));
-        return
+        return res.status(200).send(JSON.stringify({ message: config.message }));
     }
-
+    // Return error if some parameter is missing
     if (!timestamp || !sig || !address ) {
-        res.status(400).send(JSON.stringify({ message: "Missing parameter(s)"}));
-        return
+        return res.status(400).send(JSON.stringify({ message: "Missing parameter(s)"}));
+    }
+    // Make sure the threshold is correct
+    if (threshold >= timestamp ) {
+        console.log(`Warning: Threshold ${threshold} is bigger than timestamp.`);
+    }
+    // Timestamp must be within a threshold
+    if (Math.abs(epoch - timestamp) > threshold) {
+        return res.status(400).send(JSON.stringify({ message: "Timestamp out of sync. Is your server syncronized?"}));
     }
 
-    try {
-        signAddress = EthCrypto.recover(sig,EthCrypto.hash.keccak256(timestamp.toString()));
-    } catch (err){
-        res.status(400).send(JSON.stringify({ message: "Signing error: "+err.message}));
-        return
-    }
+    const sigIsValid = version && version == '2' 
+        ? verifyNacl({address, timestamp, sig})
+        : verifyEthCrypto({address, timestamp, sig})
 
-    // Check if provided timestamp is in sync with us.
-    const validTimestamp = ( epoch <= timestamp + threshold ) && ( epoch >= timestamp - threshold );
+    if (!sigIsValid) {
+        return res.status(400).send(JSON.stringify({ message: "Invalid address or signature."}));
+    }
  
-    if ( signAddress.toLowerCase() !== address.toLowerCase() ) {
-        res.status(400).send(JSON.stringify({ message: "Invalid address or signature."}));
-    } else if (!validTimestamp) {
-        res.status(400).send(JSON.stringify({ message: "Timestamp out of sync. Is your server syncronized?"}));
-    } else {
-        // Grab only first 16 chars of address as subdomain
-        var subdomain = address.toLowerCase().substr(2).substring(0,16);
-        // Grab ipv4 only
-        var remoteIP = req.ip.includes(':') ? req.ip.split(':')[3] : req.ip
-        try {
-            var result = await nsupdate(config.bind_server, config.zone, subdomain, config.ttl, remoteIP);
-            if (result) {
-                res.status(200).send(JSON.stringify({
-                    ip: remoteIP,
-                    domain: `${subdomain}.${config.zone}`,
-                    message: `Your dynamic domain ${subdomain}.${config.zone} has been updated to ${remoteIP}`})
-                );
-            }
-        } catch (err){
-            res.status(500).send(JSON.stringify({ message: "Internal error on update."}));
-            console.log(err.message);
+    // Grab only first 16 chars of address as subdomain
+    var subdomain = address.toLowerCase().replace('0x', '').substring(0,16);
+    // Grab ipv4 only
+    var remoteIP = req.ip.includes(':') ? req.ip.split(':')[3] : req.ip
+    try {
+        var result = await nsupdate(config.bind_server, config.zone, subdomain, config.ttl, remoteIP);
+        if (result) {
+            return res.status(200).send(JSON.stringify({
+                ip: remoteIP,
+                domain: `${subdomain}.${config.zone}`,
+                message: `Your dynamic domain ${subdomain}.${config.zone} has been updated to ${remoteIP}`})
+            );
         }
+    } catch (err){
+        console.log(err.message);
+        return res.status(500).send(JSON.stringify({ message: "Internal error on update."}));
     }
 });
 
