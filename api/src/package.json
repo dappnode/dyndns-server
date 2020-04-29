@@ -4,7 +4,8 @@
   "description": "Dynamic DNS server for DAppNode",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier --write '**/*.*'"
   },
   "author": "@vdo",
   "license": "GPL-3.0",
@@ -13,6 +14,7 @@
     "express": "^4.16.3",
     "express-rate-limit": "^3.2.0",
     "figlet": "^1.2.0",
+    "prettier": "^2.0.5",
     "shelljs": "^0.8.2"
   }
 }
