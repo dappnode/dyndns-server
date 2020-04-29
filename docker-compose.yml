@@ -11,7 +11,7 @@ services:
     volumes:
       - "bind-config:/etc/bind/"
     environment:
-      - ZONE=dyn.dappnode.io
+      - ZONE=dyndns.dappnode.io
       - UPDATE_HOST=172.18.0.0/16
 
   dyndns-api:
@@ -26,9 +26,9 @@ services:
       - VIRTUAL_NETWORK=nginx-proxy
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=ns.dappnode.io
-      - LETSENCRYPT_EMAIL=email@dappnode.io
+      - LETSENCRYPT_EMAIL=community@dappnode.io
       - DYNDNS_BIND_SERVER=bind
-      - DYNDNS_ZONE=dyn.dappnode.io
+      - DYNDNS_ZONE=dyndns.dappnode.io
       - DYNDNS_THRESHOLD=600
 
   nginx:
