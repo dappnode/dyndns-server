@@ -11,4 +11,4 @@ if [ ! -f "/etc/bind/$ZONE.zone" ]; then
 fi
 envsubst <"/etc/bind/templates/named.conf" >"/etc/bind/named.conf"
 
-/usr/sbin/named -d 1 -f -c /etc/bind/named.conf
+exec /usr/sbin/named -d 1 -f -c /etc/bind/named.conf
