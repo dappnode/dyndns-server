@@ -5,7 +5,7 @@ async function nsupdate(server, zone, address, ttl, ip) {
   shell.config.silent = true;
   const cmdTimeout = 10 * 1000;
   const nsupdateCmd = "nsupdate -v";
-  var updateCmd = `server ${server}\ndebug yes\nzone ${zone}\nupdate delete ${address}.${zone} A\nupdate add ${address}.${zone} ${ttl} A ${ip}\nupdate add *.${address}.${zone} ${ttl} A ${ip}\nshow\nsend`;
+  var updateCmd = `server ${server}\ndebug yes\nzone ${zone}\nupdate delete ${address}.${zone} A\nupdate add ${address}.${zone} ${ttl} A ${ip}\nupdate add \*.${address}.${zone} ${ttl} A ${ip}\nshow\nsend`;
   const res = await shell
     .echo(updateCmd)
     .exec(nsupdateCmd, { timeout: cmdTimeout });
