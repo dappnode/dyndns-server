@@ -1,7 +1,6 @@
 version: "3"
 services:
   bind:
-    restart: always
     build: ./bind
     image: dyndns-bind
     container_name: bind
@@ -13,9 +12,9 @@ services:
     environment:
       - ZONE=dyndns.dappnode.io
       - UPDATE_HOST=172.18.0.0/16
+    restart: always
 
   dyndns-api:
-    restart: always
     image: dyndns-api
     build: ./api
     container_name: dyndns-api
@@ -30,6 +29,7 @@ services:
       - DYNDNS_BIND_SERVER=bind
       - DYNDNS_ZONE=dyndns.dappnode.io
       - DYNDNS_THRESHOLD=600
+    restart: always
 
   nginx:
     image: nginx
@@ -42,6 +42,7 @@ services:
       - "nginx-certs:/etc/nginx/certs"
       - "nginx-vhosts:/etc/nginx/vhost.d"
       - "nginx-webroot:/usr/share/nginx/html"
+    restart: always
 
   dockergen:
     image: jwilder/docker-gen
@@ -54,6 +55,7 @@ services:
       - "nginx-webroot:/usr/share/nginx/html"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "./nginx/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro"
+    restart: always
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -66,6 +68,7 @@ services:
       - "nginx-vhosts:/etc/nginx/vhost.d"
       - "nginx-webroot:/usr/share/nginx/html"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: always
 
 volumes:
   bind-config:
