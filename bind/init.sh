@@ -5,7 +5,7 @@ export UPDATE_HOST=${UPDATE_HOST:-127.0.0.1}
 export RECORD_TTL=${RECORD_TTL:-30}
 export DLR='$'
 
-// Do not overwrite existing zone file
+# Do not overwrite existing zone file
 if [ ! -f "/etc/bind/$ZONE.zone" ]; then
     envsubst <"/etc/bind/templates/template.zone" >"/etc/bind/$ZONE.zone"
 fi
