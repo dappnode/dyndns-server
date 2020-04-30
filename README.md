@@ -30,7 +30,3 @@ The server expects the following parameters in a GET call from the client:
 ```
 curl https://ns.dappnode.io/?address=0x8bb3A7F48F8c684EEF5BbE56c4c49c3Df636cd02&timestamp=1537958488&sig=0x97e9c5bfb4e46f73b0ef570a69f5fb39c6576b456506f4015bd0b64a4cd62a6b7a5278cbd3e070c4ce3177a8fbbe72801680b10c1384a6dcc8c369ec3f6ceeb31b
 ```
-
-## Todo
-
-* Disable logs completely in every component, so the dyndns-server doesn't store any information about existing DAppNodes.
