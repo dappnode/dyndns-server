@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 services:
   bind:
-    restart: always
     build: ./bind
     image: dyndns-bind
     container_name: bind
@@ -9,13 +8,13 @@ services:
       - "53:53"
       - "53:53/udp"
     volumes:
-      - 'bind-config:/etc/bind/'
+      - "bind-config:/etc/bind/"
     environment:
-      - ZONE=dyn.dappnode.io
+      - ZONE=dyndns.dappnode.io
       - UPDATE_HOST=172.18.0.0/16
+    restart: always
 
   dyndns-api:
-    restart: always
     image: dyndns-api
     build: ./api
     container_name: dyndns-api
@@ -26,34 +25,37 @@ services:
       - VIRTUAL_NETWORK=nginx-proxy
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=ns.dappnode.io
-      - LETSENCRYPT_EMAIL=email@dappnode.io
+      - LETSENCRYPT_EMAIL=community@dappnode.io
       - DYNDNS_BIND_SERVER=bind
-      - DYNDNS_ZONE=dyn.dappnode.io
+      - DYNDNS_ZONE=dyndns.dappnode.io
       - DYNDNS_THRESHOLD=600
+    restart: always
 
   nginx:
     image: nginx
     container_name: nginx
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
-      - 'nginx-config:/etc/nginx/conf.d'
-      - 'nginx-certs:/etc/nginx/certs'
-      - 'nginx-vhosts:/etc/nginx/vhost.d'
-      - 'nginx-webroot:/usr/share/nginx/html'
+      - "nginx-config:/etc/nginx/conf.d"
+      - "nginx-certs:/etc/nginx/certs"
+      - "nginx-vhosts:/etc/nginx/vhost.d"
+      - "nginx-webroot:/usr/share/nginx/html"
+    restart: always
 
   dockergen:
     image: jwilder/docker-gen
     container_name: nginx-docker-gen
     command: -notify-sighup nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
     volumes:
-      - 'nginx-config:/etc/nginx/conf.d'
-      - 'nginx-certs:/etc/nginx/certs'
-      - 'nginx-vhosts:/etc/nginx/vhost.d'
-      - 'nginx-webroot:/usr/share/nginx/html'
-      - '/var/run/docker.sock:/tmp/docker.sock:ro'
-      - './nginx/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro'
+      - "nginx-config:/etc/nginx/conf.d"
+      - "nginx-certs:/etc/nginx/certs"
+      - "nginx-vhosts:/etc/nginx/vhost.d"
+      - "nginx-webroot:/usr/share/nginx/html"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./nginx/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro"
+    restart: always
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -61,11 +63,12 @@ services:
       NGINX_DOCKER_GEN_CONTAINER: nginx-docker-gen
       NGINX_PROXY_CONTAINER: nginx
     volumes:
-      - 'nginx-config:/etc/nginx/conf.d'
-      - 'nginx-certs:/etc/nginx/certs'
-      - 'nginx-vhosts:/etc/nginx/vhost.d'
-      - 'nginx-webroot:/usr/share/nginx/html'
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - "nginx-config:/etc/nginx/conf.d"
+      - "nginx-certs:/etc/nginx/certs"
+      - "nginx-vhosts:/etc/nginx/vhost.d"
+      - "nginx-webroot:/usr/share/nginx/html"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: always
 
 volumes:
   bind-config:
