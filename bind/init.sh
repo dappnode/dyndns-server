@@ -7,10 +7,10 @@ export DLR='$'
 
 if [ -z $KEY_PATH ]; then
     export INCLUDE_LINE=""
-    export UPDATE_LINE="allow-update { ${UPDATE_HOST}; };"
+    export UPDATE_LINE="${UPDATE_HOST};"
 else
     export INCLUDE_LINE="include \"$KEY_PATH\";"
-    export UPDATE_LINE="allow-update {key \"${KEY_NAME}\"; ${UPDATE_HOST}; };"
+    export UPDATE_LINE="key \"${KEY_NAME}\"; ${UPDATE_HOST};"
 fi
 
 # Do not overwrite existing zone file

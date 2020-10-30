@@ -14,7 +14,7 @@ services:
       - ZONE=dyndns.dappnode.io
       - UPDATE_HOST=172.18.0.0/16
       - KEY_NAME=certbot
-      - KEY_PATH="/etc/certbot/certbot.key"
+      - KEY_PATH=/etc/certbot/certbot.key
     restart: always
 
   dyndns-api:
