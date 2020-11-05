@@ -5,6 +5,14 @@ export UPDATE_HOST=${UPDATE_HOST:-127.0.0.1}
 export RECORD_TTL=${RECORD_TTL:-30}
 export DLR='$'
 
+if [ -z $KEY_PATH ]; then
+    export INCLUDE_LINE=""
+    export UPDATE_LINE="${UPDATE_HOST};"
+else
+    export INCLUDE_LINE="include \"$KEY_PATH\";"
+    export UPDATE_LINE="key \"${KEY_NAME}\"; ${UPDATE_HOST};"
+fi
+
 # Do not overwrite existing zone file
 if [ ! -f "/etc/bind/$ZONE.zone" ]; then
     envsubst <"/etc/bind/templates/template.zone" >"/etc/bind/$ZONE.zone"

@@ -8,6 +8,8 @@ In most of the cases, nodes running at home are using a dynamic IP provided by t
 
 Configure variables in docker-compose.yml to fit your needs.
 
+Bind server can be updated remotely with a key using RFC 2136 standard. Feature is enabled by specifing `KEY_NAME` and `KEY_PATH` envirnoment variables. Keyfile can be generated with `tsig-keygen -a hmac-sha512 $KEY_NAME > $KEY_PATH`.
+
 Then the services can be deployed using docker compose:
 
 ```
